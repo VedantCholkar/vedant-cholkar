@@ -1,0 +1,347 @@
+---
+// index.astro — High-Energy Editorial Hero (Refined Hover & Parallax)
+---
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vedant // Dossier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;800&family=Space+Mono:wght@400;700&family=Inter:wght@300;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050505;
+      --fg: #f4f4f0;
+      --accent: #A7C080; /* Muted Everforest green */
+      
+      --font-massive: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-sans: 'Inter', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── 1. THE LOADER ─── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+    }
+
+    .loader-text {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 2rem;
+    }
+
+    .progress-track {
+      width: 250px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--fg);
+      transition: width 0.1s linear;
+    }
+
+    /* ─── 2. THE CINEMATIC PARALLAX BACKGROUND ─── */
+    .hero-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .bg-parallax-wrapper {
+      position: absolute;
+      inset: -50px; 
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.1);
+      transition: transform 0.1s ease-out, filter 3s ease; 
+      will-change: transform;
+      filter: blur(10px) brightness(0);
+    }
+
+    .hero-container.loaded .bg-image {
+      filter: blur(0px) brightness(1);
+    }
+
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(90deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.7) 40%, rgba(5,5,5,0.2) 100%);
+      pointer-events: none;
+    }
+
+    /* ─── 3. THE TYPOGRAPHY (MUSEUM/EDITORIAL SAFE ALIGNMENT) ─── */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      padding: 0 5vw;
+      margin-top: -5vh;
+      pointer-events: none; 
+    }
+
+    .name-container {
+      pointer-events: auto; 
+      display: flex;
+      flex-direction: column;
+      max-width: 90vw; 
+      margin: 0 auto;
+      cursor: crosshair;
+    }
+
+    .first-name, .last-name {
+      font-family: var(--font-massive);
+      font-weight: 800;
+      font-size: clamp(3rem, 11vw, 11.5rem); 
+      line-height: 0.85;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .first-name { align-self: flex-start; color: var(--fg); }
+    .last-name { align-self: flex-end; color: transparent; }
+
+    /* ─── 4. THE REFINED EDITORIAL HOVER ─── */
+    .first-name {
+      transition: color 0.6s ease, letter-spacing 0.6s cubic-bezier(0.19, 1, 0.22, 1), text-shadow 0.6s ease;
+    }
+
+    .first-name:hover {
+      color: var(--accent);
+      letter-spacing: 0.015em; /* Smoothly pushes the letters apart for breathing room */
+      text-shadow: 0 0 25px rgba(167, 192, 128, 0.3); /* Expensive ambient glow */
+    }
+
+    .last-name {
+      -webkit-text-stroke: 1.5px var(--fg);
+      transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .last-name:hover {
+      color: var(--fg);
+      -webkit-text-stroke: 1.5px transparent;
+      transform: translateX(15px);
+    }
+
+    .hero-desc {
+      margin-top: 2rem;
+      align-self: flex-end; 
+      margin-right: clamp(1rem, 5vw, 4rem);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(244, 244, 240, 0.8);
+      text-transform: uppercase;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .hero-desc::before {
+        content: '';
+        display: block;
+        width: 30px;
+        height: 1px;
+        background: var(--accent);
+    }
+
+    /* ─── 5. THE FLAWLESS INFINITE TICKER ─── */
+    .ticker-wrap {
+      position: absolute;
+      bottom: 2rem;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      background: transparent;
+      z-index: 20;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 0;
+      display: flex;
+      pointer-events: none;
+    }
+
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker-loop 20s linear infinite;
+    }
+
+    .ticker-content {
+      display: flex;
+      flex-shrink: 0;
+      padding-right: 2rem; 
+    }
+
+    .ticker-item {
+      padding: 0 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244, 244, 240, 0.7);
+    }
+
+    .ticker-item span { color: var(--accent); }
+
+    @keyframes ticker-loop {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 768px) {
+        .first-name, .last-name { font-size: clamp(3.2rem, 15vw, 6rem); }
+        .hero-desc { margin-right: 0; flex-direction: column; align-items: flex-end; gap: 0.5rem; margin-top: 1rem;}
+        .hero-desc::before { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-text">Loading Assets</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <main class="hero-container" id="hero">
+    
+    <div class="bg-parallax-wrapper">
+        <div class="bg-image" id="bg-parallax"></div>
+    </div>
+    
+    <div class="bg-gradient"></div>
+
+    <div class="content-wrapper">
+      <div class="name-container">
+        <span class="first-name">Vedant</span>
+        <span class="last-name">Cholkar</span>
+        <div class="hero-desc">System Architecture // Web Reconnaissance</div>
+      </div>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <div class="ticker-content">
+          <div class="ticker-item">SYS: <span>FEDORA</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">STATUS: <span>ACTIVE RECON</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">ACOUSTIC DYNAMICS</div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">DEST: <span>TOKYO 2026</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">INITIATING AADVIK_TEKLABS</div>
+          <div class="ticker-item">///</div>
+        </div>
+        <div class="ticker-content">
+          <div class="ticker-item">SYS: <span>FEDORA</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">STATUS: <span>ACTIVE RECON</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">ACOUSTIC DYNAMICS</div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">DEST: <span>TOKYO 2026</span></div>
+          <div class="ticker-item">///</div>
+          <div class="ticker-item">INITIATING AADVIK_TEKLABS</div>
+          <div class="ticker-item">///</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const loader = document.getElementById('loader');
+      const progressFill = document.getElementById('progress-fill');
+      const hero = document.getElementById('hero');
+      const bgParallax = document.getElementById('bg-parallax');
+      
+      let progress = 0;
+      let isLoaded = false;
+
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 20) + 10;
+        
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          setTimeout(() => {
+            loader.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+              loader.style.display = 'none';
+              hero.classList.add('loaded');
+              
+              bgParallax.style.transform = 'scale(1.05)';
+              
+              setTimeout(() => { isLoaded = true; }, 1000);
+
+            }, 800);
+          }, 400);
+        }
+        
+        progressFill.style.width = `${progress}%`;
+      }, 100);
+
+      document.addEventListener('mousemove', (e) => {
+          if (!isLoaded) return; 
+
+          const x = (e.clientX / window.innerWidth - 0.5) * 35; 
+          const y = (e.clientY / window.innerHeight - 0.5) * 35; 
+
+          bgParallax.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+      });
+    });
+  </script>
+
+</body>
+</html>
