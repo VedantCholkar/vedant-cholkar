@@ -1,5 +1,5 @@
 ---
-// index.astro — Dossier (Data Core Hero, Deep Frost, Bulletproof Mobile)
+// index.astro — Dossier (100dvh Mobile Fix, Bulletproof Animations, Data Core)
 ---
 
 <html lang="en">
@@ -17,7 +17,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* Everforest Base Palette */
       --bg: #0d120a; 
       --bg-dark: #050704;
       --fg: #f4f4f0;
@@ -46,7 +45,7 @@
     .lenis.lenis-smooth { scroll-behavior: auto !important; }
     .lenis.lenis-stopped { overflow: hidden; }
 
-    /* ─── TACTICAL CROSSHAIR CURSOR ─── */
+    /* ─── TACTICAL CROSSHAIR ─── */
     #tactical-cursor { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; mix-blend-mode: difference; }
     .cursor-dot { position: absolute; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; transform: translate(-50%, -50%); }
     .cursor-ring { position: absolute; width: 30px; height: 30px; border: 1px solid rgba(167, 192, 128, 0.6); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.2s ease, height 0.2s ease, background 0.2s ease; }
@@ -58,36 +57,35 @@
     .progress-track { width: 250px; height: 2px; background: rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
     .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.1s linear; box-shadow: 0 0 10px var(--accent); }
 
-    /* ─── 2. HERO SECTION (TACTICAL DATA CORE) ─── */
-    .hero-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; z-index: 1; will-change: transform; background: var(--bg-dark); }
+    /* ─── 2. HERO SECTION ─── */
+    /* FIXED: Using 100dvh (Dynamic Viewport Height) so mobile browsers don't swallow the ticker */
+    .hero-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; z-index: 1; will-change: transform; background: var(--bg-dark); }
     .bg-parallax-wrapper { position: absolute; inset: -50px; z-index: 1; overflow: hidden; }
     .css-bg-container { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; transition: transform 0.1s ease-out; }
 
-    /* Massive Breathing Core Glows */
+    /* CORE GLOWS */
     .ambient-glow { position: absolute; width: 80vw; height: 80vh; background: radial-gradient(circle, rgba(167, 192, 128, 0.25) 0%, transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; filter: blur(80px); z-index: 1; animation: pulseGlow 8s ease-in-out infinite alternate; }
     .ambient-glow.top-left { top: 0%; left: 10%; background: radial-gradient(circle, rgba(167, 192, 128, 0.15) 0%, transparent 60%); width: 60vw; height: 60vw; animation-delay: -2s; animation-duration: 12s; }
     .ambient-glow.bottom-right { top: 100%; left: 90%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(167, 192, 128, 0.2) 0%, transparent 60%); animation-delay: -5s; animation-duration: 10s; }
     
     @keyframes pulseGlow { 0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); } }
 
-    /* Tactical Architecture Grid */
-    .css-grid-lines {
-      position: absolute; inset: 0; z-index: 2;
-      background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px; background-position: center center;
-      mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-      -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-    }
+    /* TACTICAL GRID */
+    .css-grid-lines { position: absolute; inset: 0; z-index: 2; background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; background-position: center center; mask-image: radial-gradient(circle at center, black 30%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%); }
+
+    /* MOBILE RECON SCANNER (Hidden on desktop) */
+    .recon-scanner-mobile { display: none; }
 
     .content-wrapper { position: relative; z-index: 10; padding: 0 5vw; margin-top: -5vh; pointer-events: none; will-change: opacity; }
     .name-container { pointer-events: auto; display: flex; flex-direction: column; max-width: 90vw; margin: 0 auto; cursor: none; }
+    
     .first-name, .last-name { font-family: var(--font-massive); font-weight: 800; font-size: clamp(3rem, 11vw, 11.5rem); line-height: 0.85; text-transform: uppercase; letter-spacing: -0.03em; white-space: nowrap; }
     .first-name { align-self: flex-start; color: var(--fg); transition: color 0.6s ease, letter-spacing 0.6s cubic-bezier(0.19, 1, 0.22, 1), text-shadow 0.6s ease; }
     .first-name:hover { color: var(--accent); letter-spacing: 0.015em; text-shadow: 0 0 35px rgba(167, 192, 128, 0.4); }
     .last-name { align-self: flex-end; color: transparent; -webkit-text-stroke: 1.5px rgba(244, 244, 240, 0.8); transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .last-name:hover { color: var(--fg); -webkit-text-stroke: 1.5px transparent; transform: translateX(15px); text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
     
-    .hero-desc { margin-top: 2rem; align-self: flex-end; margin-right: clamp(1rem, 5vw, 4rem); font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(244, 244, 240, 0.8); text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 1rem; }
+    .hero-desc { margin-top: 2rem; align-self: flex-end; margin-right: clamp(1rem, 5vw, 4rem); font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(244, 244, 240, 0.8); text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 1rem; position: relative;}
     .hero-desc::before { content: ''; display: block; width: 30px; height: 1px; background: var(--accent); }
 
     .ticker-wrap { position: absolute; bottom: 2rem; left: 0; width: 100%; overflow: hidden; background: rgba(5,7,4,0.3); backdrop-filter: blur(10px); z-index: 20; border-top: 1px solid rgba(167, 192, 128, 0.15); border-bottom: 1px solid rgba(167, 192, 128, 0.15); padding: 1rem 0; display: flex; pointer-events: none; will-change: opacity; }
@@ -97,41 +95,27 @@
     .ticker-item span { color: var(--accent); text-shadow: 0 0 10px rgba(167, 192, 128, 0.4); }
     @keyframes ticker-loop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    /* ─── UNIVERSAL DEEP FROST GLASS CLASS ─── */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-top: 1px solid rgba(255, 255, 255, 0.15); 
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
-    }
+    /* ─── UNIVERSAL DEEP FROST ─── */
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); border-left: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); }
 
     /* ─── 3. ABOUT SECTION ─── */
-    .about-section { position: relative; z-index: 10; margin-top: 100vh; width: 100vw; min-height: 120vh; 
-      background: radial-gradient(circle at 30% 70%, rgba(23, 30, 20, 1) 0%, var(--bg-dark) 70%); 
-      display: flex; flex-direction: column; justify-content: center; padding: 15vh 5vw; overflow: hidden; }
+    .about-section { position: relative; z-index: 10; margin-top: 100vh; width: 100vw; min-height: 120vh; background: radial-gradient(circle at 30% 70%, rgba(23, 30, 20, 1) 0%, var(--bg-dark) 70%); display: flex; flex-direction: column; justify-content: center; padding: 15vh 5vw; overflow: hidden; }
     .about-section::before { content: ''; position: absolute; top: -15vh; left: 0; width: 100%; height: 15vh; background: linear-gradient(to bottom, rgba(5,7,4,0) 0%, var(--bg-dark) 100%); pointer-events: none; z-index: 0; }
     .bg-watermark { position: absolute; top: -10vh; left: -2vw; font-family: var(--font-massive); font-size: 45vw; line-height: 0.8; color: rgba(255, 255, 255, 0.02); -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.04); z-index: 0; pointer-events: none; will-change: transform; }
-
     .about-container { position: relative; z-index: 10; display: flex; flex-direction: column; gap: 8rem; width: 100%; max-width: 90vw; margin: 0 auto; }
     .about-top-row { display: flex; justify-content: space-between; align-items: center; gap: 5vw; }
     .manifesto-block { flex: 1.2; }
     .about-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 3rem; display: inline-block; border-bottom: 1px solid rgba(167, 192, 128, 0.3); padding-bottom: 0.5rem; text-shadow: 0 0 10px rgba(167, 192, 128, 0.2); }
     .about-headline { font-family: var(--font-sans); font-weight: 300; font-size: clamp(1.8rem, 3.5vw, 3rem); line-height: 1.3; color: var(--fg); letter-spacing: -0.02em; }
     .about-headline strong { font-family: var(--font-massive); font-weight: 800; font-size: 1.3em; text-transform: uppercase; color: var(--accent); display: block; margin-top: 1rem; letter-spacing: -0.02em; }
-
     .asset-wrapper { flex: 0.8; display: flex; justify-content: flex-end; position: relative; }
     .asset-card { width: clamp(280px, 25vw, 450px); aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; will-change: transform; }
     .asset-card::before, .asset-card::after { content: ''; position: absolute; width: 15px; height: 15px; border: 1px solid var(--accent); opacity: 0.5; }
     .asset-card::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
     .asset-card::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
     .asset-placeholder-text { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(244, 244, 240, 0.4); text-transform: uppercase; }
-    
     .rotating-badge { position: absolute; bottom: -3rem; left: -3rem; width: 120px; height: 120px; animation: spin 12s linear infinite; z-index: 20; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-
     .about-modules { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 3rem; }
     .module-card { display: flex; flex-direction: column; gap: 1.5rem; padding: 2.5rem; transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease; }
     .module-card:hover { border-color: rgba(167, 192, 128, 0.4); background: rgba(167, 192, 128, 0.03); transform: translateY(-5px); box-shadow: 0 30px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(167, 192, 128, 0.05); }
@@ -139,48 +123,36 @@
     .module-header span:last-child { color: var(--accent); }
     .module-text { font-family: var(--font-sans); font-size: 0.95rem; line-height: 1.7; color: rgba(244, 244, 240, 0.7); }
 
-    /* ─── 4. PROJECTS GALLERY (DEEP FROST ENCASED) ─── */
-    .projects-section { position: relative; z-index: 10; width: 100vw; 
-      background: radial-gradient(circle at 70% 30%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 60%); 
-      padding: 15vh 5vw 25vh 5vw; }
+    /* ─── 4. PROJECTS GALLERY ─── */
+    .projects-section { position: relative; z-index: 10; width: 100vw; background: radial-gradient(circle at 70% 30%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 60%); padding: 15vh 5vw 25vh 5vw; }
     .projects-header { width: 100%; max-width: 90vw; margin: 0 auto 10vh auto; text-align: right; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 2rem; }
     .projects-title { font-family: var(--font-massive); font-size: clamp(3rem, 6vw, 6rem); font-weight: 800; text-transform: uppercase; color: var(--fg); letter-spacing: -0.02em; }
-    
     .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; max-width: 90vw; margin: 0 auto; align-items: flex-start; }
     .grid-column { display: flex; flex-direction: column; gap: 4vw; }
     .grid-column.right { margin-top: 15vh; will-change: transform; }
-
     .project-card { display: flex; flex-direction: column; gap: 1.5rem; position: relative; padding: 1.5rem; transition: transform 0.4s ease, border-color 0.4s ease; }
     .project-card:hover { border-color: rgba(167, 192, 128, 0.4); transform: translateY(-5px); }
-    
     .project-image-container { width: 100%; aspect-ratio: 4/3; overflow: hidden; position: relative; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
     .project-image { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); display: flex; align-items: center; justify-content: center; }
     .project-card:hover .project-image { transform: scale(1.03); }
-    
     .project-image-container::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 20%; background: linear-gradient(to bottom, transparent, rgba(167, 192, 128, 0.3), transparent); z-index: 5; pointer-events: none; transition: top 0.1s; }
     .project-card:hover .project-image-container::after { animation: scanSweep 2s linear infinite; }
     @keyframes scanSweep { 0% { top: -20%; } 100% { top: 120%; } }
-
     .project-meta { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 0.5rem; border-left: 2px solid transparent; transition: border-color 0.3s ease; }
     .project-card:hover .project-meta { border-left-color: var(--accent); }
     .project-tag { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; }
     .project-name { font-family: var(--font-sans); font-size: 1.5rem; font-weight: 400; color: var(--fg); letter-spacing: -0.01em; transition: color 0.3s ease; }
     .project-card:hover .project-name { color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
-    /* ─── 5. CONTACT / HANDSHAKE SECTION ─── */
-    .contact-section { position: relative; z-index: 10; width: 100vw; 
-      background: radial-gradient(circle at 50% 90%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 70%); 
-      padding: 10vh 5vw 5vh 5vw; border-top: 1px solid rgba(255,255,255,0.02); }
-    
+    /* ─── 5. CONTACT SECTION ─── */
+    .contact-section { position: relative; z-index: 10; width: 100vw; background: radial-gradient(circle at 50% 90%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 70%); padding: 10vh 5vw 5vh 5vw; border-top: 1px solid rgba(255,255,255,0.02); }
     .contact-container { width: 100%; max-width: 90vw; margin: 0 auto; display: flex; flex-direction: column; gap: 10vh; }
     .contact-header { display: flex; flex-direction: column; gap: 2rem; }
     .contact-headline { font-family: var(--font-sans); font-size: clamp(2rem, 4vw, 4rem); font-weight: 300; color: var(--fg); line-height: 1.2; letter-spacing: -0.02em; }
     .contact-links-wrapper { display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; }
     .magnetic-wrap { display: inline-block; padding: 2rem; margin: -2rem; }
-    
-    /* Safely clamped down so 18 characters perfectly fit the screen */
-    .magnetic-text { display: inline-block; font-family: var(--font-massive); font-size: clamp(2rem, 3.5vw, 4.5rem); font-weight: 800; color: var(--fg); text-transform: uppercase; text-decoration: none; letter-spacing: -0.03em; line-height: 0.9; word-break: break-word; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
-    
+    /* FIXED: Clamped down tight so vedant@cholkar.dev perfectly fits */
+    .magnetic-text { display: inline-block; font-family: var(--font-massive); font-size: clamp(1.5rem, 3.5vw, 4.5rem); font-weight: 800; color: var(--fg); text-transform: uppercase; text-decoration: none; letter-spacing: -0.03em; line-height: 0.9; word-break: break-word; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
     .social-row { display: flex; gap: 4vw; margin-top: 2rem; }
     .social-text { font-family: var(--font-mono); font-size: clamp(1rem, 2vw, 1.5rem); color: rgba(244, 244, 240, 0.6); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
     .social-text:hover { color: var(--accent); }
@@ -190,12 +162,39 @@
     .reveal-elem { opacity: 0; transform: translateY(30px); transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1); }
     .reveal-elem.is-visible { opacity: 1; transform: translateY(0); }
 
-    /* ─── GLOBAL MOBILE LOCK (PERFECTED) ─── */
+    /* ─── GLOBAL MOBILE OVERHAUL (TACTICAL ANIMATIONS FIXED) ─── */
     @media (max-width: 900px) {
         body, html { overflow-x: clip !important; cursor: auto !important; }
         a, button { cursor: auto !important; }
         #tactical-cursor { display: none !important; }
 
+        /* RESOURCE OPTIMIZATION */
+        .ambient-glow { animation: none !important; opacity: 0.8 !important; transform: translate(-50%, -50%) scale(1) !important; filter: blur(40px) !important;}
+        .ambient-glow.top-left { opacity: 0.6 !important; }
+        .ambient-glow.bottom-right { opacity: 0.7 !important; }
+
+        /* MOBILE RECON SCANNER */
+        .recon-scanner-mobile { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;}
+        .scanner-line { position: absolute; left: 0; width: 100%; height: 5vh; background: linear-gradient(to bottom, transparent, rgba(167, 192, 128, 0.4), transparent); animation: scannerMobileSweep 4s linear infinite; will-change: top; }
+        @keyframes scannerMobileSweep { 0% { top: -10vh; } 100% { top: 110vh; } }
+
+        /* INITIALIZE CASCADE (Bulletproofed with !important to override desktop transitions) */
+        .loaded .name-container { opacity: 1 !important; }
+        .first-name, .last-name, .hero-desc { opacity: 0; }
+        
+        .loaded .first-name { animation: mobileNameSlideRight 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards !important; }
+        .loaded .last-name { animation: mobileNameSlideLeft 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards !important; animation-delay: 0.2s !important; }
+        .loaded .hero-desc { animation: mobileFadeInUp 0.6s ease-out forwards !important; animation-delay: 0.5s !important; }
+
+        @keyframes mobileNameSlideRight { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
+        @keyframes mobileNameSlideLeft { 0% { opacity: 0; transform: translateX(30px); } 100% { opacity: 1; transform: translateX(0); } }
+        @keyframes mobileFadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        /* Decorative Status Indicator */
+        .hero-desc::after { content: '[OPTI_ACTIVE]'; font-size: 0.5rem; color: var(--accent); position: absolute; right: -70px; top: 0; animation: mobileStatusBlink 2s infinite; opacity: 0.7;}
+        @keyframes mobileStatusBlink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+        /* Mobile Layout Constraints */
         .name-container { margin: 0; align-items: flex-start; max-width: 100%; }
         .first-name, .last-name { font-size: clamp(2rem, 10vw, 3.5rem) !important; align-self: flex-start !important; }
         .last-name { margin-left: 1rem !important; }
@@ -208,12 +207,10 @@
         .about-headline { font-size: clamp(1.5rem, 6vw, 2rem) !important; } 
         .asset-wrapper { width: 100%; justify-content: flex-start; margin-top: 1rem; }
         .about-modules { grid-template-columns: 1fr; gap: 3rem; }
-
         .projects-header { text-align: left; margin-bottom: 5vh; }
         .projects-title { font-size: clamp(1.8rem, 7.5vw, 3rem) !important; line-height: 1.1 !important; letter-spacing: -0.04em !important; word-wrap: normal !important; overflow-wrap: normal !important; }
         .projects-grid { grid-template-columns: 1fr; gap: 6vh; }
         .grid-column.right { margin-top: 0; transform: none !important; }
-
         .contact-headline { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
         .magnetic-text { font-size: clamp(1.5rem, 8vw, 3rem) !important; word-break: break-word; line-height: 1; }
         .social-row { flex-direction: column; gap: 1.5rem; }
@@ -237,6 +234,8 @@
   <main class="hero-container" id="hero">
     <div class="bg-parallax-wrapper">
       <div id="bg-parallax" class="css-bg-container">
+        <div class="recon-scanner-mobile"><div class="scanner-line"></div></div>
+        
         <div class="ambient-glow"></div>
         <div class="ambient-glow top-left"></div>
         <div class="ambient-glow bottom-right"></div>
