@@ -26,6 +26,7 @@
       --font-mono: 'Space Mono', monospace;
       --font-sans: 'Inter', sans-serif;
     }
+    /* Decorative Status Indicator */
 
     html { scroll-behavior: auto; }
 
@@ -190,9 +191,6 @@
         @keyframes mobileNameSlideLeft { 0% { opacity: 0; transform: translateX(30px); } 100% { opacity: 1; transform: translateX(0); } }
         @keyframes mobileFadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* Decorative Status Indicator */
-        .hero-desc::after { content: '[OPTI_ACTIVE]'; font-size: 0.5rem; color: var(--accent); position: absolute; right: -70px; top: 0; animation: mobileStatusBlink 2s infinite; opacity: 0.7;}
-        @keyframes mobileStatusBlink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
         /* Mobile Layout Constraints */
         .name-container { margin: 0; align-items: flex-start; max-width: 100%; }
