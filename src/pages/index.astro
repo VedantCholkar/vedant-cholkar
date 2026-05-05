@@ -1,517 +1,359 @@
 ---
-// index.astro — Dossier (100dvh Mobile Fix, Bulletproof Animations, Data Core)
+// index.astro — Dossier (Final UI with Custom Modern Scrollbar)
 ---
 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vedant // Dossier</title>
+  <title>Vedant Cholkar — CyberSecurity</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;800&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d120a; 
-      --bg-dark: #050704;
-      --fg: #f4f4f0;
-      --accent: #A7C080; 
-      
-      --font-massive: 'Syne', sans-serif;
+      --bg: #0f1012; 
+      --fg: #ffffff;
+      --dim: #8b929e;
+      --accent: #E5533D; 
+      --font-main: 'Plus Jakarta Sans', sans-serif;
       --font-mono: 'Space Mono', monospace;
-      --font-sans: 'Inter', sans-serif;
+      --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    /* Decorative Status Indicator */
 
-    html { scroll-behavior: auto; }
+    /* ─── MODERN CUSTOM SCROLLBAR ─── */
+    /* Hide native scrollbar for Chrome, Safari and Opera */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: var(--bg); 
+    }
+    
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1); 
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent); 
+    }
+
+    /* Firefox Scrollbar Support */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) var(--bg);
+    }
+
+    html.lenis { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
     body {
-      width: 100%;
-      overflow-x: clip;
-      overflow-y: auto;
-      background: var(--bg-dark);
+      background-color: var(--bg);
       color: var(--fg);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      cursor: none;
       -webkit-font-smoothing: antialiased;
-      cursor: none; 
     }
 
-    a, button { cursor: none; }
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -10;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+      background-size: 40px 40px;
+    }
 
-    html.lenis, html.lenis body { height: auto; }
-    .lenis.lenis-smooth { scroll-behavior: auto !important; }
-    .lenis.lenis-stopped { overflow: hidden; }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+      background: var(--fg); border-radius: 50%;
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%, -50%);
+    }
+    #cursor-lens {
+      position: fixed; top: 0; left: 0; width: 120px; height: 120px;
+      background: #ffffff; border-radius: 50%;
+      mix-blend-mode: difference; pointer-events: none; z-index: 99998;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.6s var(--ease-fluid);
+    }
+    .lens-active #cursor-lens { transform: translate(-50%, -50%) scale(1); }
+    .lens-active #cursor-dot { opacity: 0; }
 
-    /* ─── TACTICAL CROSSHAIR ─── */
-    #tactical-cursor { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; mix-blend-mode: difference; }
-    .cursor-dot { position: absolute; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; transform: translate(-50%, -50%); }
-    .cursor-ring { position: absolute; width: 30px; height: 30px; border: 1px solid rgba(167, 192, 128, 0.6); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.2s ease, height 0.2s ease, background 0.2s ease; }
-    .cursor-hover .cursor-ring { width: 50px; height: 50px; background: rgba(167, 192, 128, 0.1); border-color: var(--accent); }
+    .glass {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 12px;
+    }
 
-    /* ─── 1. LOADER ─── */
-    #loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-    .loader-text { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 2rem; color: var(--fg); }
-    .progress-track { width: 250px; height: 2px; background: rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
-    .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.1s linear; box-shadow: 0 0 10px var(--accent); }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 5vw; }
 
-    /* ─── 2. HERO SECTION ─── */
-    /* FIXED: Using 100dvh (Dynamic Viewport Height) so mobile browsers don't swallow the ticker */
-    .hero-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; z-index: 1; will-change: transform; background: var(--bg-dark); }
-    .bg-parallax-wrapper { position: absolute; inset: -50px; z-index: 1; overflow: hidden; }
-    .css-bg-container { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; transition: transform 0.1s ease-out; }
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15vh 0;
+      gap: 5vw;
+    }
 
-    /* CORE GLOWS */
-    .ambient-glow { position: absolute; width: 80vw; height: 80vh; background: radial-gradient(circle, rgba(167, 192, 128, 0.25) 0%, transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; filter: blur(80px); z-index: 1; animation: pulseGlow 8s ease-in-out infinite alternate; }
-    .ambient-glow.top-left { top: 0%; left: 10%; background: radial-gradient(circle, rgba(167, 192, 128, 0.15) 0%, transparent 60%); width: 60vw; height: 60vw; animation-delay: -2s; animation-duration: 12s; }
-    .ambient-glow.bottom-right { top: 100%; left: 90%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(167, 192, 128, 0.2) 0%, transparent 60%); animation-delay: -5s; animation-duration: 10s; }
+    .hero-content { flex: 1.2; }
+    .status { 
+      color: var(--accent); 
+      font-family: var(--font-mono); 
+      font-size: 0.8rem; 
+      letter-spacing: 0.2em; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      margin-bottom: 2rem; 
+    }
+    .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    h1 { font-size: clamp(3rem, 9vw, 8rem); font-weight: 800; line-height: 0.9; margin-bottom: 3rem; }
+    .hero-manifesto { font-size: 1.2rem; color: var(--dim); line-height: 1.6; max-width: 520px; padding: 2rem; }
+
+    .portrait-wrap { 
+      width: clamp(280px, 30vw, 450px); 
+      aspect-ratio: 3/4; 
+      overflow: hidden; 
+      border-radius: 12px; 
+      padding: 15px; 
+    }
+    .portrait-inner { width: 100%; height: 100%; overflow: hidden; border-radius: 8px; }
+    .portrait-inner img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 1.2s var(--ease-fluid); }
+    .portrait-wrap:hover .portrait-inner img { filter: grayscale(0%); }
+
+    /* ─── FOCUS & LABELS ─── */
+    .focus { padding: 15vh 0; }
+    .focus-text { font-size: clamp(1.2rem, 2.5vw, 2.2rem); font-weight: 300; line-height: 1.5; color: var(--dim); }
+    .highlight { color: var(--fg); font-weight: 500; }
     
-    @keyframes pulseGlow { 0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); } }
+    .section-label { 
+      color: var(--accent); 
+      font-family: var(--font-mono); 
+      font-size: 0.9rem; 
+      margin-bottom: 5rem; 
+      display: block; 
+      letter-spacing: 0.4em; 
+      text-transform: uppercase;
+    }
 
-    /* TACTICAL GRID */
-    .css-grid-lines { position: absolute; inset: 0; z-index: 2; background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; background-position: center center; mask-image: radial-gradient(circle at center, black 30%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%); }
-
-    /* MOBILE RECON SCANNER (Hidden on desktop) */
-    .recon-scanner-mobile { display: none; }
-
-    .content-wrapper { position: relative; z-index: 10; padding: 0 5vw; margin-top: -5vh; pointer-events: none; will-change: opacity; }
-    .name-container { pointer-events: auto; display: flex; flex-direction: column; max-width: 90vw; margin: 0 auto; cursor: none; }
+    /* ─── PROJECTS (RIVER GRID) ─── */
+    .projects { padding: 15vh 0; }
+    .project-grid { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12vh 8vw;
+    }
     
-    .first-name, .last-name { font-family: var(--font-massive); font-weight: 800; font-size: clamp(3rem, 11vw, 11.5rem); line-height: 0.85; text-transform: uppercase; letter-spacing: -0.03em; white-space: nowrap; }
-    .first-name { align-self: flex-start; color: var(--fg); transition: color 0.6s ease, letter-spacing 0.6s cubic-bezier(0.19, 1, 0.22, 1), text-shadow 0.6s ease; }
-    .first-name:hover { color: var(--accent); letter-spacing: 0.015em; text-shadow: 0 0 35px rgba(167, 192, 128, 0.4); }
-    .last-name { align-self: flex-end; color: transparent; -webkit-text-stroke: 1.5px rgba(244, 244, 240, 0.8); transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .last-name:hover { color: var(--fg); -webkit-text-stroke: 1.5px transparent; transform: translateX(15px); text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+    .project-card { padding: 2rem; transition: transform 0.6s var(--ease-fluid); text-decoration: none; color: inherit; cursor: none; }
+    .project-card:hover { transform: translateY(-15px); }
+    .project-grid > :nth-child(even) { margin-top: 15vh; }
+
+    .img-box { width: 100%; aspect-ratio: 16/10; overflow: hidden; border-radius: 8px; margin-bottom: 2rem; }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.8s var(--ease-fluid); }
+    .project-card:hover .img-box img { filter: grayscale(0%); }
     
-    .hero-desc { margin-top: 2rem; align-self: flex-end; margin-right: clamp(1rem, 5vw, 4rem); font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(244, 244, 240, 0.8); text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 1rem; position: relative;}
-    .hero-desc::before { content: ''; display: block; width: 30px; height: 1px; background: var(--accent); }
+    .project-title { font-size: 1.8rem; font-weight: 700; margin-top: 1rem; color: var(--fg); }
+    .project-desc { font-size: 1rem; color: var(--dim); line-height: 1.6; margin-top: 1rem; }
+    .project-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
 
-    .ticker-wrap { position: absolute; bottom: 2rem; left: 0; width: 100%; overflow: hidden; background: rgba(5,7,4,0.3); backdrop-filter: blur(10px); z-index: 20; border-top: 1px solid rgba(167, 192, 128, 0.15); border-bottom: 1px solid rgba(167, 192, 128, 0.15); padding: 1rem 0; display: flex; pointer-events: none; will-change: opacity; }
-    .ticker { display: flex; white-space: nowrap; animation: ticker-loop 20s linear infinite; }
-    .ticker-content { display: flex; flex-shrink: 0; padding-right: 2rem; }
-    .ticker-item { padding: 0 2rem; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244, 244, 240, 0.6); }
-    .ticker-item span { color: var(--accent); text-shadow: 0 0 10px rgba(167, 192, 128, 0.4); }
-    @keyframes ticker-loop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    /* ─── FOOTER ─── */
+    .contact { padding: 20vh 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+    .email-box { padding: 2.5rem 2rem; margin-bottom: 4rem; display: inline-block; width: 100%; max-width: 750px; }
+    .email-link { 
+      font-size: clamp(1.2rem, 3.5vw, 2.5rem); 
+      font-weight: 700; 
+      color: var(--fg); 
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    
+    .social-links { display: flex; justify-content: center; align-items: center; gap: 4rem; }
+    .social-links a { 
+      color: var(--fg); 
+      text-decoration: none; 
+      font-family: var(--font-main); 
+      font-size: clamp(1.2rem, 3vw, 2.5rem); 
+      font-weight: 700;
+      transition: color 0.4s var(--ease-fluid); 
+    }
+    .social-links a:hover { color: var(--accent); }
 
-    /* ─── UNIVERSAL DEEP FROST ─── */
-    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); border-left: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); }
-
-    /* ─── 3. ABOUT SECTION ─── */
-    .about-section { position: relative; z-index: 10; margin-top: 100vh; width: 100vw; min-height: 120vh; background: radial-gradient(circle at 30% 70%, rgba(23, 30, 20, 1) 0%, var(--bg-dark) 70%); display: flex; flex-direction: column; justify-content: center; padding: 15vh 5vw; overflow: hidden; }
-    .about-section::before { content: ''; position: absolute; top: -15vh; left: 0; width: 100%; height: 15vh; background: linear-gradient(to bottom, rgba(5,7,4,0) 0%, var(--bg-dark) 100%); pointer-events: none; z-index: 0; }
-    .bg-watermark { position: absolute; top: -10vh; left: -2vw; font-family: var(--font-massive); font-size: 45vw; line-height: 0.8; color: rgba(255, 255, 255, 0.02); -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.04); z-index: 0; pointer-events: none; will-change: transform; }
-    .about-container { position: relative; z-index: 10; display: flex; flex-direction: column; gap: 8rem; width: 100%; max-width: 90vw; margin: 0 auto; }
-    .about-top-row { display: flex; justify-content: space-between; align-items: center; gap: 5vw; }
-    .manifesto-block { flex: 1.2; }
-    .about-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 3rem; display: inline-block; border-bottom: 1px solid rgba(167, 192, 128, 0.3); padding-bottom: 0.5rem; text-shadow: 0 0 10px rgba(167, 192, 128, 0.2); }
-    .about-headline { font-family: var(--font-sans); font-weight: 300; font-size: clamp(1.8rem, 3.5vw, 3rem); line-height: 1.3; color: var(--fg); letter-spacing: -0.02em; }
-    .about-headline strong { font-family: var(--font-massive); font-weight: 800; font-size: 1.3em; text-transform: uppercase; color: var(--accent); display: block; margin-top: 1rem; letter-spacing: -0.02em; }
-    .asset-wrapper { flex: 0.8; display: flex; justify-content: flex-end; position: relative; }
-    .asset-card { width: clamp(280px, 25vw, 450px); aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; position: relative; will-change: transform; }
-    .asset-card::before, .asset-card::after { content: ''; position: absolute; width: 15px; height: 15px; border: 1px solid var(--accent); opacity: 0.5; }
-    .asset-card::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-    .asset-card::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-    .asset-placeholder-text { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(244, 244, 240, 0.4); text-transform: uppercase; }
-    .rotating-badge { position: absolute; bottom: -3rem; left: -3rem; width: 120px; height: 120px; animation: spin 12s linear infinite; z-index: 20; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .about-modules { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 3rem; }
-    .module-card { display: flex; flex-direction: column; gap: 1.5rem; padding: 2.5rem; transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease; }
-    .module-card:hover { border-color: rgba(167, 192, 128, 0.4); background: rgba(167, 192, 128, 0.03); transform: translateY(-5px); box-shadow: 0 30px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(167, 192, 128, 0.05); }
-    .module-header { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: #fff; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-    .module-header span:last-child { color: var(--accent); }
-    .module-text { font-family: var(--font-sans); font-size: 0.95rem; line-height: 1.7; color: rgba(244, 244, 240, 0.7); }
-
-    /* ─── 4. PROJECTS GALLERY ─── */
-    .projects-section { position: relative; z-index: 10; width: 100vw; background: radial-gradient(circle at 70% 30%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 60%); padding: 15vh 5vw 25vh 5vw; }
-    .projects-header { width: 100%; max-width: 90vw; margin: 0 auto 10vh auto; text-align: right; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 2rem; }
-    .projects-title { font-family: var(--font-massive); font-size: clamp(3rem, 6vw, 6rem); font-weight: 800; text-transform: uppercase; color: var(--fg); letter-spacing: -0.02em; }
-    .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 100%; max-width: 90vw; margin: 0 auto; align-items: flex-start; }
-    .grid-column { display: flex; flex-direction: column; gap: 4vw; }
-    .grid-column.right { margin-top: 15vh; will-change: transform; }
-    .project-card { display: flex; flex-direction: column; gap: 1.5rem; position: relative; padding: 1.5rem; transition: transform 0.4s ease, border-color 0.4s ease; }
-    .project-card:hover { border-color: rgba(167, 192, 128, 0.4); transform: translateY(-5px); }
-    .project-image-container { width: 100%; aspect-ratio: 4/3; overflow: hidden; position: relative; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
-    .project-image { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); display: flex; align-items: center; justify-content: center; }
-    .project-card:hover .project-image { transform: scale(1.03); }
-    .project-image-container::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 20%; background: linear-gradient(to bottom, transparent, rgba(167, 192, 128, 0.3), transparent); z-index: 5; pointer-events: none; transition: top 0.1s; }
-    .project-card:hover .project-image-container::after { animation: scanSweep 2s linear infinite; }
-    @keyframes scanSweep { 0% { top: -20%; } 100% { top: 120%; } }
-    .project-meta { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 0.5rem; border-left: 2px solid transparent; transition: border-color 0.3s ease; }
-    .project-card:hover .project-meta { border-left-color: var(--accent); }
-    .project-tag { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; }
-    .project-name { font-family: var(--font-sans); font-size: 1.5rem; font-weight: 400; color: var(--fg); letter-spacing: -0.01em; transition: color 0.3s ease; }
-    .project-card:hover .project-name { color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
-
-    /* ─── 5. CONTACT SECTION ─── */
-    .contact-section { position: relative; z-index: 10; width: 100vw; background: radial-gradient(circle at 50% 90%, rgba(23, 30, 20, 0.8) 0%, var(--bg-dark) 70%); padding: 10vh 5vw 5vh 5vw; border-top: 1px solid rgba(255,255,255,0.02); }
-    .contact-container { width: 100%; max-width: 90vw; margin: 0 auto; display: flex; flex-direction: column; gap: 10vh; }
-    .contact-header { display: flex; flex-direction: column; gap: 2rem; }
-    .contact-headline { font-family: var(--font-sans); font-size: clamp(2rem, 4vw, 4rem); font-weight: 300; color: var(--fg); line-height: 1.2; letter-spacing: -0.02em; }
-    .contact-links-wrapper { display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; }
-    .magnetic-wrap { display: inline-block; padding: 2rem; margin: -2rem; }
-    /* FIXED: Clamped down tight so vedant@cholkar.dev perfectly fits */
-    .magnetic-text { display: inline-block; font-family: var(--font-massive); font-size: clamp(1.5rem, 3.5vw, 4.5rem); font-weight: 800; color: var(--fg); text-transform: uppercase; text-decoration: none; letter-spacing: -0.03em; line-height: 0.9; word-break: break-word; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
-    .social-row { display: flex; gap: 4vw; margin-top: 2rem; }
-    .social-text { font-family: var(--font-mono); font-size: clamp(1rem, 2vw, 1.5rem); color: rgba(244, 244, 240, 0.6); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
-    .social-text:hover { color: var(--accent); }
-    .footer-bottom { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 2rem; margin-top: 10vh; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(244,244,240,0.4); text-transform: uppercase; }
-
-    /* Scroll Reveal */
-    .reveal-elem { opacity: 0; transform: translateY(30px); transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1); }
-    .reveal-elem.is-visible { opacity: 1; transform: translateY(0); }
-
-    /* ─── GLOBAL MOBILE OVERHAUL (TACTICAL ANIMATIONS FIXED) ─── */
+    /* ─── MOBILE REFINEMENTS ─── */
     @media (max-width: 900px) {
-        body, html { overflow-x: clip !important; cursor: auto !important; }
-        a, button { cursor: auto !important; }
-        #tactical-cursor { display: none !important; }
-
-        /* RESOURCE OPTIMIZATION */
-        .ambient-glow { animation: none !important; opacity: 0.8 !important; transform: translate(-50%, -50%) scale(1) !important; filter: blur(40px) !important;}
-        .ambient-glow.top-left { opacity: 0.6 !important; }
-        .ambient-glow.bottom-right { opacity: 0.7 !important; }
-
-        /* MOBILE RECON SCANNER */
-        .recon-scanner-mobile { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;}
-        .scanner-line { position: absolute; left: 0; width: 100%; height: 5vh; background: linear-gradient(to bottom, transparent, rgba(167, 192, 128, 0.4), transparent); animation: scannerMobileSweep 4s linear infinite; will-change: top; }
-        @keyframes scannerMobileSweep { 0% { top: -10vh; } 100% { top: 110vh; } }
-
-        /* INITIALIZE CASCADE (Bulletproofed with !important to override desktop transitions) */
-        .loaded .name-container { opacity: 1 !important; }
-        .first-name, .last-name, .hero-desc { opacity: 0; }
-        
-        .loaded .first-name { animation: mobileNameSlideRight 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards !important; }
-        .loaded .last-name { animation: mobileNameSlideLeft 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards !important; animation-delay: 0.2s !important; }
-        .loaded .hero-desc { animation: mobileFadeInUp 0.6s ease-out forwards !important; animation-delay: 0.5s !important; }
-
-        @keyframes mobileNameSlideRight { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
-        @keyframes mobileNameSlideLeft { 0% { opacity: 0; transform: translateX(30px); } 100% { opacity: 1; transform: translateX(0); } }
-        @keyframes mobileFadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-
-
-        /* Mobile Layout Constraints */
-        .name-container { margin: 0; align-items: flex-start; max-width: 100%; }
-        .first-name, .last-name { font-size: clamp(2rem, 10vw, 3.5rem) !important; align-self: flex-start !important; }
-        .last-name { margin-left: 1rem !important; }
-        .hero-desc { align-self: flex-start !important; margin-right: 0 !important; margin-left: 1rem !important; flex-direction: column; align-items: flex-start; gap: 0.5rem; margin-top: 1rem; text-align: left; max-width: 85vw; }
-        .hero-desc::before { display: none; }
-
-        .about-section { padding: 10vh 5vw; }
-        .bg-watermark { font-size: 80vw; top: 0; left: -5vw; }
-        .about-top-row { flex-direction: column; align-items: flex-start; gap: 3rem; }
-        .about-headline { font-size: clamp(1.5rem, 6vw, 2rem) !important; } 
-        .asset-wrapper { width: 100%; justify-content: flex-start; margin-top: 1rem; }
-        .about-modules { grid-template-columns: 1fr; gap: 3rem; }
-        .projects-header { text-align: left; margin-bottom: 5vh; }
-        .projects-title { font-size: clamp(1.8rem, 7.5vw, 3rem) !important; line-height: 1.1 !important; letter-spacing: -0.04em !important; word-wrap: normal !important; overflow-wrap: normal !important; }
-        .projects-grid { grid-template-columns: 1fr; gap: 6vh; }
-        .grid-column.right { margin-top: 0; transform: none !important; }
-        .contact-headline { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
-        .magnetic-text { font-size: clamp(1.5rem, 8vw, 3rem) !important; word-break: break-word; line-height: 1; }
-        .social-row { flex-direction: column; gap: 1.5rem; }
-        .social-text { font-size: 1rem !important; }
-        .footer-bottom { flex-direction: column; gap: 1rem; align-items: flex-start; margin-top: 6vh; }
+      body { cursor: auto; }
+      #cursor-dot, #cursor-lens { display: none; }
+      .hero { flex-direction: column-reverse; align-items: center; text-align: center; padding: 10vh 0 15vh 0; }
+      .hero-content { width: 100%; margin-top: 5vh; }
+      .status { justify-content: center; flex-direction: row-reverse; } 
+      .hero-manifesto { margin: 0 auto; border-left: none; border-top: 2px solid rgba(255,255,255,0.1); padding: 2.5rem 1rem; }
+      .portrait-wrap { width: 180px; aspect-ratio: 1/1; border-radius: 50%; padding: 8px; margin: 0 auto; }
+      .portrait-inner { border-radius: 50%; }
+      .project-grid { grid-template-columns: 1fr; gap: 10vh; }
+      .project-grid > :nth-child(even) { margin-top: 0; }
+      .contact { padding: 15vh 5vw; }
+      .social-links { flex-direction: column; gap: 2.5rem; }
+      .email-link { white-space: normal; word-break: break-all; }
+      ::-webkit-scrollbar { width: 0; } /* Hide on mobile */
     }
   </style>
 </head>
 <body>
 
-  <div id="tactical-cursor">
-    <div class="cursor-dot"></div>
-    <div class="cursor-ring" id="cursor-ring"></div>
-  </div>
+  <div class="bg-grid"></div>
+  <div id="cursor-lens"></div>
+  <div id="cursor-dot"></div>
 
-  <div id="loader">
-    <div class="loader-text">Initializing Systems</div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-  </div>
+  <main class="container">
+    
+    <section class="hero">
+      <div class="hero-content">
+        <div class="status">
+          CYBERSECURITY RESEARCHER
+          <span class="status-dot"></span>
+        </div>
+        <h1>Vedant Cholkar.</h1>
+        <div class="hero-manifesto glass">
+          <p>Securing the world for a safer web. Driven by passion, defined by hard work, and determined to succeed.</p>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="portrait-wrap glass lens-target">
+          <div class="portrait-inner">
+            <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/suitpfp_qpkyok.png" alt="Vedant Cholkar" />
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <main class="hero-container" id="hero">
-    <div class="bg-parallax-wrapper">
-      <div id="bg-parallax" class="css-bg-container">
-        <div class="recon-scanner-mobile"><div class="scanner-line"></div></div>
+    <section class="focus">
+      <span class="section-label">FOCUS</span>
+      <p class="focus-text">
+        Expertise in <span class="highlight">Web Application Security</span>, penetration testing, and secure network configuration. Proficient in <span class="highlight">Python, Bash, and C</span> with a focus on AI/LLM optimization.
+      </p>
+    </section>
+
+    <section class="projects">
+      <span class="section-label">OPERATIONS ARCHIVE</span>
+      <div class="project-grid">
         
-        <div class="ambient-glow"></div>
-        <div class="ambient-glow top-left"></div>
-        <div class="ambient-glow bottom-right"></div>
-        <div class="css-grid-lines"></div>
-      </div>
-    </div>
-    
-    <div class="content-wrapper" id="hero-content">
-      <div class="name-container">
-        <span class="first-name">Vedant</span>
-        <span class="last-name">Cholkar</span>
-        <div class="hero-desc">System Architecture // Web Reconnaissance</div>
-      </div>
-    </div>
-    
-    <div class="ticker-wrap" id="hero-ticker">
-      <div class="ticker">
-        <div class="ticker-content">
-          <div class="ticker-item">SYS: <span>FEDORA</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">STATUS: <span>ACTIVE RECON</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">ACOUSTIC DYNAMICS</div><div class="ticker-item">///</div>
-          <div class="ticker-item">DEST: <span>TOKYO 2026</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">INITIATING AADVIK_TEKLABS</div><div class="ticker-item">///</div>
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cryptmentor_swt0at.png" alt="CryptMentor" /></div>
+          <span class="project-meta">01 // APP // FINTECH</span>
+          <h3 class="project-title">CryptMentor Simulator</h3>
+          <p class="project-desc">A fully functional simulation of the cryptocurrency market to provide insight for new investors in the workings of cyber exchange.</p>
         </div>
-        <div class="ticker-content">
-          <div class="ticker-item">SYS: <span>FEDORA</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">STATUS: <span>ACTIVE RECON</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">ACOUSTIC DYNAMICS</div><div class="ticker-item">///</div>
-          <div class="ticker-item">DEST: <span>TOKYO 2026</span></div><div class="ticker-item">///</div>
-          <div class="ticker-item">INITIATING AADVIK_TEKLABS</div><div class="ticker-item">///</div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964056/studyflow_fnidst.png" alt="StudyFlow" /></div>
+          <span class="project-meta">02 // APP // DEV</span>
+          <h3 class="project-title">StudyFlow Platform</h3>
+          <p class="project-desc">Web app containing tools useful for students, including pomodoro timers, integration with google calendar, stress exercises, and much more.</p>
         </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cs50x_y4cue1.png" alt="CS50x" /></div>
+          <span class="project-meta">03 // CERT // HARVARD</span>
+          <h3 class="project-title">CS50x Computer Science</h3>
+          <p class="project-desc">An official course by University of Harvard Online, where over 50+ projects were done, all available on GitHub, setting a foundation for all of computer science.</p>
+        </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/cs50_cybersec_mqrprp.jpg" alt="CS50 CyberSec" /></div>
+          <span class="project-meta">04 // CERT // HARVARD</span>
+          <h3 class="project-title">CS50 Cybersecurity</h3>
+          <p class="project-desc">Introduction into CyberSecurity by Harvard Online, with graded topic essays deepening the understanding of web security.</p>
+        </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/aadvik_x5u2ib.jpg" alt="Aadvik" /></div>
+          <span class="project-meta">05 // AI // AUTOMATION</span>
+          <h3 class="project-title">Aadvik TekLabs Workflow</h3>
+          <p class="project-desc">Executed a 30-day intensive technical internship centered on AI Workflow Automation Tools.</p>
+        </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/quantum_iamuuv.png" alt="Quantum" /></div>
+          <span class="project-meta">06 // SEC // ENCRYPTION</span>
+          <h3 class="project-title">Quantum vs Classical Cipher</h3>
+          <p class="project-desc">A web app showing the different relative strengths of encryption and dangers possessed by quantum computing in breaking them against classical computers.</p>
+        </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/onlyoffice_rmzjq7.jpg" alt="OnlyOffice" /></div>
+          <span class="project-meta">07 // SEC // RESEARCH</span>
+          <h3 class="project-title">OnlyOffice XSS Deep-Dive</h3>
+          <p class="project-desc">A research presentation on how exactly a XSS is achieved in the web application, as a final project for Harvard Online.</p>
+        </div>
+
+        <div class="project-card glass">
+          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/portswigger_nktm5s.png" alt="PortSwigger" /></div>
+          <span class="project-meta">08 // RECON // LABS</span>
+          <h3 class="project-title">PortSwigger Labs</h3>
+          <p class="project-desc">Deep understanding of web exploits after breaking labs across a broad spectrum of topics, including OWASP Top 10 vulnerabilities.</p>
+        </div>
+
       </div>
-    </div>
+    </section>
+
+    <footer class="contact">
+      <span class="section-label">CONNECT FOR WEB TESTING / TO BUILD PROJECTS</span>
+      <div class="email-box glass lens-target">
+        <a href="javascript:void(0)" class="email-link">vedantcholkar@gmail.com</a>
+      </div>
+      <div class="social-links">
+        <a href="javascript:void(0)">GitHub</a>
+        <a href="javascript:void(0)">LinkedIn</a>
+      </div>
+    </footer>
+
   </main>
 
-  <section class="about-section" id="about">
-    <div class="bg-watermark" id="scroll-watermark">01</div>
-    <div class="about-container">
-      <div class="about-top-row">
-        <div class="manifesto-block reveal-elem">
-          <span class="about-label">IDENT // V.CHOLKAR</span>
-          <h2 class="about-headline">
-            Operating out of Bengaluru, driven by a singular baseline:
-            <strong>Buy nice,<br>or buy twice.</strong>
-            Optimization is not an afterthought; it is the foundation.
-          </h2>
-        </div>
-        <div class="asset-wrapper reveal-elem" style="transition-delay: 0.2s;">
-          <div class="asset-card glass-card" id="scroll-asset">
-            <span class="asset-placeholder-text">[ VISUAL ASSET // PROFILE ]</span>
-            <svg class="rotating-badge" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,6" opacity="0.5"/>
-              <circle cx="50" cy="50" r="35" fill="none" stroke="var(--fg)" stroke-width="0.5" opacity="0.3"/>
-              <path d="M50 10 L50 20 M50 90 L50 80 M10 50 L20 50 M90 50 L80 50" stroke="var(--accent)" stroke-width="2"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div class="about-modules">
-        <div class="module-card glass-card reveal-elem" style="transition-delay: 0.1s;">
-          <div class="module-header"><span>[ Module_A ]</span><span>The Architecture</span></div>
-          <p class="module-text">A dual discipline. The uncompromising structure of web application reconnaissance, mapping vulnerabilities and executing precise tooling, balanced against the raw physical tension and exact rhythm required for Spanish Flamenco acoustic performance.</p>
-        </div>
-        <div class="module-card glass-card reveal-elem" style="transition-delay: 0.2s;">
-          <div class="module-header"><span>[ Module_B ]</span><span>Current Trajectory</span></div>
-          <p class="module-text">Executing hardware and system optimizations on Fedora Linux. Currently preparing for active operations at Aadvik Teklabs, alongside a calculated, multi-phase trajectory targeting engineering deployment in Japan via MEXT 2026.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="projects-section" id="projects">
-    <div class="projects-header reveal-elem">
-      <h2 class="projects-title">Operations<br><span style="color: transparent; -webkit-text-stroke: 1.5px var(--fg);">Archive</span></h2>
-    </div>
-    <div class="projects-grid">
-      <div class="grid-column left">
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 01 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ ALGO // HARVARD ]</span><h3 class="project-name">CS50 Certification</h3></div>
-        </div>
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 03 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ APP // DEV ]</span><h3 class="project-name">StudyFlow Platform</h3></div>
-        </div>
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 05 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ RECON // LABS ]</span><h3 class="project-name">PortSwigger Academy: 50+</h3></div>
-        </div>
-      </div>
-      <div class="grid-column right" id="projects-col-right">
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 02 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ SEC // HARVARD ]</span><h3 class="project-name">Cybersecurity Certification</h3></div>
-        </div>
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 04 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ APP // DEV ]</span><h3 class="project-name">CryptMentor</h3></div>
-        </div>
-        <div class="project-card glass-card reveal-elem hover-target">
-          <div class="project-image-container"><div class="project-image"><span style="font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.2);">[ ASSET // 06 ]</span></div></div>
-          <div class="project-meta"><span class="project-tag">[ VULN // RESEARCH ]</span><h3 class="project-name">XSS Vulnerability Report</h3></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="contact-section" id="contact">
-    <div class="contact-container">
-      <div class="contact-header reveal-elem">
-        <span class="about-label">INITIATE // HANDSHAKE</span>
-        <h2 class="contact-headline">No forms. No friction.<br>Just direct architecture.</h2>
-      </div>
-      <div class="contact-links-wrapper reveal-elem">
-        <div class="magnetic-wrap hover-target">
-          <a href="#" class="magnetic-text cipher-link" data-value="vedant@cholkar.dev">vedant@cholkar.dev</a>
-        </div>
-        <div class="social-row">
-          <div class="magnetic-wrap hover-target">
-            <a href="#" class="social-text cipher-link magnetic-text" data-value="GITHUB // V-CHOLKAR" style="font-size: clamp(1rem, 2vw, 1.5rem) !important;">GITHUB // V-CHOLKAR</a>
-          </div>
-          <div class="magnetic-wrap hover-target">
-            <a href="#" class="social-text cipher-link magnetic-text" data-value="LINKEDIN // VEDANT" style="font-size: clamp(1rem, 2vw, 1.5rem) !important;">LINKEDIN // VEDANT</a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span>© 2026 // VEDANT CHOLKAR</span>
-        <span>SYS. STATUS // OPTIMIZED</span>
-        <span id="footer-time">00:00:00 BLR</span>
-      </div>
-    </div>
-  </section>
-
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      
-      const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
-      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
 
-      const cursorDot = document.querySelector('.cursor-dot');
-      const cursorRing = document.getElementById('cursor-ring');
-      let mouseX = 0, mouseY = 0;
-      let ringX = 0, ringY = 0;
+    const dot = document.getElementById('cursor-dot');
+    const lens = document.getElementById('cursor-lens');
+    let mouseX = -100, mouseY = -100, dotX = -100, dotY = -100;
 
-      if (window.innerWidth > 900) {
-        document.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX; mouseY = e.clientY;
-          cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
-        });
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
 
-        const renderCursor = () => {
-          ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
-          cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
-          requestAnimationFrame(renderCursor);
-        };
-        requestAnimationFrame(renderCursor);
+    function updateCursor() {
+      dotX += (mouseX - dotX) * 0.2;
+      dotY += (mouseY - dotY) * 0.2;
+      dot.style.transform = `translate(calc(${dotX}px - 50%), calc(${dotY}px - 50%))`;
+      lens.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%)) scale(${document.body.classList.contains('lens-active') ? 1 : 0})`;
+      requestAnimationFrame(updateCursor);
+    }
+    updateCursor();
 
-        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
-        hoverTargets.forEach(target => {
-          target.addEventListener('mouseenter', () => document.getElementById('tactical-cursor').classList.add('cursor-hover'));
-          target.addEventListener('mouseleave', () => document.getElementById('tactical-cursor').classList.remove('cursor-hover'));
-        });
-      }
-
-      const loader = document.getElementById('loader');
-      const progressFill = document.getElementById('progress-fill');
-      const hero = document.getElementById('hero');
-      const bgParallax = document.getElementById('bg-parallax');
-      let progress = 0; let isLoaded = false;
-
-      const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 20) + 10;
-        if (progress >= 100) {
-          progress = 100; clearInterval(interval);
-          setTimeout(() => {
-            loader.style.transform = 'translateY(-100%)';
-            setTimeout(() => {
-              loader.style.display = 'none'; hero.classList.add('loaded');
-              setTimeout(() => { isLoaded = true; }, 1000);
-            }, 800);
-          }, 400);
-        }
-        progressFill.style.width = `${progress}%`;
-      }, 100);
-
-      document.addEventListener('mousemove', (e) => {
-          if (!isLoaded || window.innerWidth <= 900) return; 
-          const x = (e.clientX / window.innerWidth - 0.5) * 35; 
-          const y = (e.clientY / window.innerHeight - 0.5) * 35; 
-          bgParallax.style.transform = `translate(${x}px, ${y}px)`;
-      });
-
-      const revealElements = document.querySelectorAll('.reveal-elem');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
-      }, { threshold: 0.1 }); 
-      revealElements.forEach(el => observer.observe(el));
-
-      const watermark = document.getElementById('scroll-watermark');
-      const assetCard = document.getElementById('scroll-asset');
-      const aboutSection = document.getElementById('about');
-      const heroContent = document.getElementById('hero-content');
-      const heroTicker = document.getElementById('hero-ticker');
-      const projectsSection = document.getElementById('projects');
-      const rightCol = document.getElementById('projects-col-right');
-      
-      window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY; const windowHeight = window.innerHeight;
-
-        if (scrollY < windowHeight) {
-            const opacity = 1 - (scrollY / (windowHeight * 0.6)); 
-            if(heroContent) heroContent.style.opacity = Math.max(0, opacity);
-            if(heroTicker) heroTicker.style.opacity = Math.max(0, opacity);
-        }
-
-        if (aboutSection) {
-            const rect = aboutSection.getBoundingClientRect(); const scrollProgress = windowHeight - rect.top;
-            if (scrollProgress > 0 && rect.top < windowHeight + 500) {
-                if(watermark) watermark.style.transform = `translateY(${scrollProgress * 0.35}px)`;
-                if(assetCard && window.innerWidth > 900) assetCard.style.transform = `translateY(${scrollProgress * -0.15}px)`; 
-            }
-        }
-
-        if (projectsSection && rightCol && window.innerWidth > 900) {
-            const pRect = projectsSection.getBoundingClientRect(); const pScrollProgress = windowHeight - pRect.top;
-            if (pScrollProgress > 0 && pRect.top < windowHeight + pRect.height) {
-                rightCol.style.transform = `translateY(${pScrollProgress * -0.12}px)`;
-            }
-        }
-      });
-
-      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-      const cipherLinks = document.querySelectorAll('.cipher-link');
-      
-      cipherLinks.forEach(link => {
-        link.addEventListener('mouseenter', event => {
-          let iterations = 0; const targetText = event.target.dataset.value;
-          clearInterval(link.cipherInterval);
-          link.cipherInterval = setInterval(() => {
-            event.target.innerText = targetText.split("").map((letter, index) => {
-                if(index < iterations || letter === " ") return targetText[index];
-                return letters[Math.floor(Math.random() * 42)];
-              }).join("");
-            if(iterations >= targetText.length){ clearInterval(link.cipherInterval); event.target.style.color = "var(--accent)"; }
-            iterations += 1 / 3; 
-          }, 30);
-        });
-        link.addEventListener('mouseleave', event => {
-            clearInterval(link.cipherInterval);
-            event.target.innerText = event.target.dataset.value;
-            event.target.style.color = ""; 
-        });
-      });
-
-      const magneticWraps = document.querySelectorAll('.magnetic-wrap');
-      magneticWraps.forEach(wrap => {
-        if (window.innerWidth > 900) {
-          const text = wrap.querySelector('.magnetic-text');
-          wrap.addEventListener('mousemove', (e) => {
-              const rect = wrap.getBoundingClientRect();
-              const x = e.clientX - rect.left - rect.width / 2;
-              const y = e.clientY - rect.top - rect.height / 2;
-              text.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-          });
-          wrap.addEventListener('mouseleave', () => text.style.transform = `translate(0px, 0px)`);
-        }
-      });
-
-      const timeDisplay = document.getElementById('footer-time');
-      setInterval(() => {
-          const now = new Date();
-          timeDisplay.innerText = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false }) + " BLR";
-      }, 1000);
-
+    document.querySelectorAll('.lens-target').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('lens-active'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('lens-active'));
     });
   </script>
-
 </body>
 </html>
