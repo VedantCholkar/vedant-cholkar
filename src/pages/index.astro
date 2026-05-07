@@ -1,16 +1,16 @@
 ---
-// index.astro — Dossier (Final Payload: All Projects + Custom Scrollbar + Geometric Unfolding Loader)
+// index.astro — Vedant Cholkar · Cybersecurity
 ---
 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vedant Cholkar — CyberSecurity</title>
-  
+  <title>Vedant Cholkar — Cybersecurity</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
 
@@ -18,347 +18,726 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0f1012; 
-      --fg: #ffffff;
-      --dim: #8b929e;
-      --accent: #E5533D; 
-      --font-main: 'Plus Jakarta Sans', sans-serif;
-      --font-mono: 'Space Mono', monospace;
-      --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
+      --bg:       #0a0a0b;
+      --fg:       #ede8e0;
+      --dim:      rgba(237,232,224,0.72);
+      --dim2:     rgba(237,232,224,0.50);
+      --glass-bg: rgba(237,232,224,0.045);
+      --glass-b:  rgba(237,232,224,0.12);
+      --glass-bt: rgba(237,232,224,0.28);
+      --accent:   #E5533D;
+      --serif:    'Cormorant', Georgia, serif;
+      --sans:     'DM Sans', sans-serif;
+      --mono:     'Space Mono', monospace;
+      --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+      --pad:      clamp(32px, 7vw, 96px);
     }
 
-    /* ─── GEOMETRIC UNFOLDING LOADER ─── */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: clip-path 2s var(--ease-fluid);
-      clip-path: inset(0 0 0 0);
-    }
-    .loader-shape {
-      width: 50px;
-      height: 50px;
-      border: 1px solid var(--accent);
-      animation: morphRotate 2.5s infinite var(--ease-fluid);
-    }
-    @keyframes morphRotate {
-      0% { border-radius: 0%; transform: rotate(0deg); }
-      50% { border-radius: 50%; transform: rotate(180deg); border-color: #fff; }
-      100% { border-radius: 0%; transform: rotate(360deg); }
-    }
-
-    /* ─── SCROLLBAR ─── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-    * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.1) var(--bg); }
-
-    html.lenis { height: auto; }
+    html { height: auto; scroll-behavior: auto; }
     .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
     body {
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--fg);
-      font-family: var(--font-main);
+      font-family: var(--sans);
+      font-weight: 300;
       overflow-x: hidden;
       cursor: none;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .bg-grid {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: -10;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
-      background-size: 40px 40px;
-    }
-
+    /* ── ORIGINAL CURSOR ── */
     #cursor-dot {
-      position: fixed; top: 0; left: 0; width: 10px; height: 10px;
-      background: var(--fg); border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      width: 10px; height: 10px;
+      background: var(--fg);
+      border-radius: 50%;
       pointer-events: none; z-index: 99999;
       transform: translate(-50%, -50%);
     }
     #cursor-lens {
-      position: fixed; top: 0; left: 0; width: 120px; height: 120px;
-      background: #ffffff; border-radius: 50%;
-      mix-blend-mode: difference; pointer-events: none; z-index: 99998;
+      position: fixed; top: 0; left: 0;
+      width: 120px; height: 120px;
+      background: #ffffff;
+      border-radius: 50%;
+      mix-blend-mode: difference;
+      pointer-events: none; z-index: 99998;
       transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.6s var(--ease-fluid);
+      transition: transform 0.6s var(--ease);
     }
     .lens-active #cursor-lens { transform: translate(-50%, -50%) scale(1); }
-    .lens-active #cursor-dot { opacity: 0; }
+    .lens-active #cursor-dot  { opacity: 0; }
 
-    .glass {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-top: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 12px;
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      opacity: 0.028;
+      pointer-events: none;
     }
 
-    .container { max-width: 1400px; margin: 0 auto; padding: 0 5vw; }
+    /* ── LOADER ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px;
+      transition: opacity 0.8s var(--ease);
+    }
+    #loader.done { opacity: 0; pointer-events: none; }
+    .loader-name {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--dim);
+      animation: fadeWord 2s var(--ease) forwards;
+    }
+    .loader-line {
+      width: 1px; height: 0;
+      background: var(--accent);
+      animation: growLine 1.8s var(--ease) forwards;
+    }
+    @keyframes growLine { to { height: 48px; } }
+    @keyframes fadeWord { 0%{opacity:0} 60%{opacity:1} 100%{opacity:0.5} }
 
-    /* ─── HERO ─── */
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px var(--pad);
+      transition: background 0.6s var(--ease), backdrop-filter 0.6s var(--ease);
+    }
+    nav.scrolled {
+      background: rgba(10,10,11,0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--glass-b);
+    }
+    .nav-mark {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: var(--dim);
+    }
+    .nav-status {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+    }
+    .pulse {
+      width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 2.4s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(229,83,61,0.5); }
+      50%      { opacity: 0.7; box-shadow: 0 0 0 6px rgba(229,83,61,0); }
+    }
+    .nav-link {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-link:hover { color: var(--fg); }
+
+    /* ── HERO ── */
     .hero {
       min-height: 100vh;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15vh 0;
-      gap: 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
     }
 
-    .hero-content { flex: 1.2; }
-    .status { 
-      color: var(--accent); 
-      font-family: var(--font-mono); 
-      font-size: 0.8rem; 
-      letter-spacing: 0.2em; 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      margin-bottom: 2rem; 
+    .hero-l {
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 56px 72px var(--pad);
+      border-right: 1px solid var(--glass-b);
     }
-    .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    h1 { font-size: clamp(3rem, 9vw, 8rem); font-weight: 800; line-height: 0.9; margin-bottom: 3rem; }
-    .hero-manifesto { font-size: 1.2rem; color: var(--dim); line-height: 1.6; max-width: 520px; padding: 2rem; }
-
-    .portrait-wrap { 
-      width: clamp(280px, 30vw, 450px); 
-      aspect-ratio: 3/4; 
-      overflow: hidden; 
-      border-radius: 12px; 
-      padding: 15px; 
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--dim2);
+      margin-bottom: 36px;
     }
-    .portrait-inner { width: 100%; height: 100%; overflow: hidden; border-radius: 8px; }
-    .portrait-inner img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 1.2s var(--ease-fluid); }
-    .portrait-wrap:hover .portrait-inner img { filter: grayscale(0%); }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(4.5rem, 9vw, 8.5rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      margin-bottom: 52px;
+    }
+    .hero-name em {
+      display: block;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--dim);
+    }
+    .hero-glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-b);
+      border-top-color: var(--glass-bt);
+      border-radius: 10px;
+      padding: 24px 28px;
+      max-width: 400px;
+    }
+    .hero-glass p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--dim);
+      font-weight: 300;
+    }
 
-    /* ─── FOCUS ─── */
-    .focus { padding: 15vh 0; }
-    .focus-text { font-size: clamp(1.2rem, 2.5vw, 2.2rem); font-weight: 300; line-height: 1.5; color: var(--dim); }
-    .highlight { color: var(--fg); font-weight: 500; }
-    
-    .section-label { 
-      color: var(--accent); 
-      font-family: var(--font-mono); 
-      font-size: 0.9rem; 
-      margin-bottom: 5rem; 
-      display: block; 
-      letter-spacing: 0.4em; 
+    /* RIGHT — portrait, original grayscale→color on hover */
+    .hero-r { position: relative; overflow: hidden; }
+    .hero-r img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      filter: grayscale(100%);
+      display: block;
+      transition: filter 1.2s var(--ease);
+    }
+    .hero-r:hover img { filter: grayscale(0%); }
+    .hero-r-fade {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        var(--bg) 0%, transparent 18%,
+        transparent 72%, var(--bg) 100%);
+      pointer-events: none;
+    }
+    .hero-r-fade-left {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 30%);
+      pointer-events: none;
+    }
+    .hero-r-meta {
+      position: absolute; bottom: 48px; right: 36px; left: 36px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .hero-r-meta span {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--dim2);
+      line-height: 1.7;
+    }
+
+    /* ── STATEMENT ── */
+    .statement {
+      padding: clamp(80px,14vh,160px) var(--pad);
+      border-top: 1px solid var(--glass-b);
+      border-bottom: 1px solid var(--glass-b);
+    }
+    .statement-label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      margin-bottom: 44px;
+      display: block;
+    }
+    .statement-text {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3.2vw, 3rem);
+      font-weight: 300;
+      line-height: 1.38;
+      color: var(--dim);
+      max-width: 820px;
+      letter-spacing: 0.01em;
+    }
+    .statement-text strong { color: var(--fg); font-weight: 400; }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--glass-b);
+    }
+    .stat {
+      padding: clamp(36px,6vh,64px) var(--pad);
+      border-right: 1px solid var(--glass-b);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-n {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: var(--dim);
       text-transform: uppercase;
+      line-height: 1.65;
     }
 
-    /* ─── PROJECTS ─── */
-    .projects { padding: 15vh 0; }
-    .project-grid { 
-      display: grid; 
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 12vh 8vw;
+    /* ── PROJECTS — each project is its own full-width row ── */
+    .projects { border-bottom: 1px solid var(--glass-b); }
+    .projects-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 32px var(--pad);
+      border-bottom: 1px solid var(--glass-b);
     }
-    
-    .project-card { padding: 2rem; transition: transform 0.6s var(--ease-fluid); text-decoration: none; color: inherit; cursor: none; }
-    .project-card:hover { transform: translateY(-15px); }
-    .project-grid > :nth-child(even) { margin-top: 15vh; }
+    .projects-header-label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+    }
+    .projects-header-count {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: var(--dim2);
+    }
 
-    .img-box { width: 100%; aspect-ratio: 16/10; overflow: hidden; border-radius: 8px; margin-bottom: 2rem; }
-    .img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.8s var(--ease-fluid); }
-    .project-card:hover .img-box img { filter: grayscale(0%); }
-    
-    .project-title { font-size: 1.8rem; font-weight: 700; margin-top: 1rem; color: var(--fg); }
-    .project-desc { font-size: 1rem; color: var(--dim); line-height: 1.6; margin-top: 1rem; }
-    .project-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
-
-    /* ─── FOOTER ─── */
-    .contact { padding: 20vh 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-    .email-box { padding: 2.5rem 2rem; margin-bottom: 4rem; display: inline-block; width: 100%; max-width: 750px; }
-    .email-link { 
-      font-size: clamp(1.2rem, 3.5vw, 2.5rem); 
-      font-weight: 700; 
-      color: var(--fg); 
+    .proj {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--glass-b);
       text-decoration: none;
-      white-space: nowrap;
+      color: inherit;
+      cursor: none;
+      min-height: 360px;
     }
-    
-    .social-links { display: flex; justify-content: center; align-items: center; gap: 4rem; }
-    .social-links a { 
-      color: var(--fg); 
-      text-decoration: none; 
-      font-family: var(--font-main); 
-      font-size: clamp(1.2rem, 3vw, 2.5rem); 
-      font-weight: 700;
-      transition: color 0.4s var(--ease-fluid); 
-    }
-    .social-links a:hover { color: var(--accent); }
+    .proj:last-child { border-bottom: none; }
 
-    @media (max-width: 900px) {
+    /* Alternate image side each row */
+    .proj:nth-child(even) .proj-img  { order: 2; }
+    .proj:nth-child(even) .proj-body { order: 1; }
+
+    .proj-img {
+      overflow: hidden;
+      position: relative;
+    }
+    .proj-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%) brightness(0.75);
+      transform: scale(1.05);
+      transition: filter 1s var(--ease), transform 1s var(--ease);
+      display: block;
+    }
+    .proj:hover .proj-img img {
+      filter: grayscale(0%) brightness(0.92);
+      transform: scale(1);
+    }
+
+    .proj-body {
+      padding: clamp(48px,7vh,88px) clamp(40px,5vw,80px);
+      display: flex; flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      border-left: 1px solid var(--glass-b);
+    }
+    .proj:nth-child(even) .proj-body {
+      border-left: none;
+      border-right: 1px solid var(--glass-b);
+    }
+
+    .proj-row {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+    }
+    .proj-meta {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+    }
+    .proj-type {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--dim2);
+    }
+    .proj-title {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+      font-weight: 400;
+      line-height: 1.15;
+    }
+    .proj-desc {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--dim);
+      font-weight: 300;
+      max-width: 400px;
+    }
+    .proj-arrow {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--dim2);
+      margin-top: 8px;
+      transition: color 0.3s, transform 0.4s var(--ease);
+    }
+    .proj:hover .proj-arrow {
+      color: var(--accent);
+      transform: translate(5px, -5px);
+    }
+
+    /* ── CONTACT ── */
+    .contact {
+      padding: clamp(80px,16vh,180px) var(--pad) clamp(56px,10vh,96px);
+    }
+    .contact-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      margin-bottom: 40px;
+      display: block;
+    }
+    /* Email and socials at same visual scale */
+    .contact-email {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      text-decoration: none;
+      display: block;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      transition: color 0.4s;
+    }
+    .contact-email:hover { color: var(--accent); }
+    .contact-socials {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 72px;
+    }
+    .contact-socials a {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3.6vw, 3.2rem);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      color: var(--dim);
+      text-decoration: none;
+      display: block;
+      line-height: 1.1;
+      transition: color 0.4s;
+    }
+    .contact-socials a:hover { color: var(--fg); }
+    .contact-bottom {
+      display: flex; align-items: center;
+      justify-content: flex-end;
+      padding-top: 32px;
+      border-top: 1px solid var(--glass-b);
+    }
+    .contact-copy {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--dim2);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
       body { cursor: auto; }
       #cursor-dot, #cursor-lens { display: none; }
-      .hero { flex-direction: column-reverse; align-items: center; text-align: center; padding: 10vh 0 15vh 0; }
-      .hero-content { width: 100%; margin-top: 5vh; }
-      .status { justify-content: center; flex-direction: row-reverse; } 
-      .hero-manifesto { margin: 0 auto; border-left: none; border-top: 2px solid rgba(255,255,255,0.1); padding: 2.5rem 1rem; }
-      .portrait-wrap { width: 180px; aspect-ratio: 1/1; border-radius: 50%; padding: 8px; margin: 0 auto; }
-      .portrait-inner { border-radius: 50%; }
-      .project-grid { grid-template-columns: 1fr; gap: 10vh; }
-      .project-grid > :nth-child(even) { margin-top: 0; }
-      .contact { padding: 15vh 5vw; }
-      .social-links { flex-direction: column; gap: 2.5rem; }
-      .email-link { white-space: normal; word-break: break-all; }
-      ::-webkit-scrollbar { width: 0; } 
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-l {
+        padding: 120px var(--pad) 56px;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-b);
+      }
+      .hero-r { min-height: 65vw; }
+      .hero-r-fade-left { display: none; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-top: 1px solid var(--glass-b); }
+      .stat:nth-child(4) { border-top: 1px solid var(--glass-b); border-right: none; }
+      .proj { grid-template-columns: 1fr; min-height: auto; }
+      .proj:nth-child(even) .proj-img  { order: 0; }
+      .proj:nth-child(even) .proj-body { order: 0; }
+      .proj-img { min-height: 56vw; }
+      .proj-body { border-left: none !important; border-right: none !important; }
+    }
+    @media (max-width: 540px) {
+      .contact-email { font-size: clamp(1.4rem, 7vw, 2rem); word-break: break-all; }
+      .contact-socials a { font-size: clamp(1.1rem, 5vw, 1.6rem); }
+      ::-webkit-scrollbar { width: 0; }
     }
   </style>
 </head>
 <body>
 
-  <!-- GEOMETRIC UNFOLDING LOADER -->
   <div id="loader">
-    <div class="loader-shape"></div>
+    <div class="loader-line"></div>
+    <span class="loader-name">VEDANT CHOLKAR</span>
   </div>
 
-  <div class="bg-grid"></div>
   <div id="cursor-lens"></div>
   <div id="cursor-dot"></div>
 
-  <main class="container">
-    
-    <section class="hero">
-      <div class="hero-content">
-        <div class="status">
-          CYBERSECURITY RESEARCHER
-          <span class="status-dot"></span>
-        </div>
-        <h1>Vedant Cholkar.</h1>
-        <div class="hero-manifesto glass">
-          <p>Securing the world for a safer web. Driven by passion, defined by hard work, and determined to succeed.</p>
-        </div>
+  <nav id="nav">
+    <span class="nav-mark">VEDANT CHOLKAR - 2026</span>
+    <div class="nav-status">
+      <span class="pulse"></span>
+      CYBERSECURITY RESEARCHER
+    </div>
+    <a href="mailto:vedantcholkar@gmail.com" class="nav-link lens-target">CONNECT</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-l">
+      <p class="hero-eyebrow reveal">001 / IDENTITY</p>
+      <h1 class="hero-name reveal" style="transition-delay:0.1s">
+        Vedant<br>
+        <em>Cholkar.</em>
+      </h1>
+      <div class="hero-glass glass reveal" style="transition-delay:0.22s">
+        <p>Securing the web through precision and patience. Web application security, penetration testing, and a deep understanding of how systems fail.</p>
       </div>
-      <div class="hero-image">
-        <div class="portrait-wrap glass lens-target">
-          <div class="portrait-inner">
-            <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/suitpfp_qpkyok.png" alt="Vedant Cholkar" />
-          </div>
-        </div>
+    </div>
+    <div class="hero-r lens-target">
+      <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/suitpfp_qpkyok.png" alt="Vedant Cholkar" />
+      <div class="hero-r-fade"></div>
+      <div class="hero-r-fade-left"></div>
+      <div class="hero-r-meta">
+        <span>CYBERSECURITY<br>RESEARCHER</span>
+        <span>BENGALURU<br>INDIA</span>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="focus">
-      <span class="section-label">FOCUS</span>
-      <p class="focus-text">
-        Expertise in <span class="highlight">Web Application Security</span>, penetration testing, and secure network configuration. Proficient in <span class="highlight">Python, Bash, and C</span> with a focus on AI/LLM optimization.
-      </p>
-    </section>
+  <!-- STATEMENT -->
+  <section class="statement">
+    <span class="statement-label reveal">FOCUS</span>
+    <p class="statement-text reveal" style="transition-delay:0.12s">
+      Expertise in <strong>web application security</strong> and penetration testing.
+      Proficient in <strong>Python, Bash, and C</strong>.
+      Driven by curiosity, defined by the work.
+    </p>
+  </section>
 
-    <section class="projects">
-      <span class="section-label">OPERATIONS ARCHIVE</span>
-      <div class="project-grid">
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cryptmentor_swt0at.png" alt="CryptMentor" /></div>
-          <span class="project-meta">01 // APP // FINTECH</span>
-          <h3 class="project-title">CryptMentor Simulator</h3>
-          <p class="project-desc">A fully functional simulation of the cryptocurrency market to provide insight for new investors in the workings of cyber exchange.</p>
-        </div>
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat reveal">
+      <div class="stat-n">50+</div>
+      <div class="stat-label">CS50x<br>Projects</div>
+    </div>
+    <div class="stat reveal" style="transition-delay:0.08s">
+      <div class="stat-n">8</div>
+      <div class="stat-label">OWASP Labs<br>Completed</div>
+    </div>
+    <div class="stat reveal" style="transition-delay:0.16s">
+      <div class="stat-n">2</div>
+      <div class="stat-label">Harvard<br>Certifications</div>
+    </div>
+    <div class="stat reveal" style="transition-delay:0.24s">
+      <div class="stat-n">30</div>
+      <div class="stat-label">Day AI<br>Internship</div>
+    </div>
+  </div>
 
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964056/studyflow_fnidst.png" alt="StudyFlow" /></div>
-          <span class="project-meta">02 // APP // DEV</span>
-          <h3 class="project-title">StudyFlow Platform</h3>
-          <p class="project-desc">Web app containing tools useful for students, including pomodoro timers, integration with google calendar, stress exercises, and much more.</p>
-        </div>
+  <!-- PROJECTS -->
+  <section class="projects">
+    <div class="projects-header">
+      <span class="projects-header-label">OPERATIONS ARCHIVE</span>
+      <span class="projects-header-count">008 ENTRIES</span>
+    </div>
 
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cs50x_y4cue1.png" alt="CS50x" /></div>
-          <span class="project-meta">03 // CERT // HARVARD</span>
-          <h3 class="project-title">CS50x Computer Science</h3>
-          <p class="project-desc">An official course by University of Harvard Online, where over 50+ projects were done, all available on GitHub, setting a foundation for all of computer science.</p>
-        </div>
-
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/cs50_cybersec_mqrprp.jpg" alt="CS50 CyberSec" /></div>
-          <span class="project-meta">04 // CERT // HARVARD</span>
-          <h3 class="project-title">CS50 Cybersecurity</h3>
-          <p class="project-desc">Introduction into CyberSecurity by Harvard Online, with graded topic essays deepening the understanding of web security.</p>
-        </div>
-
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/aadvik_x5u2ib.jpg" alt="Aadvik" /></div>
-          <span class="project-meta">05 // AI // AUTOMATION</span>
-          <h3 class="project-title">Aadvik TekLabs Workflow</h3>
-          <p class="project-desc">Executed a 30-day intensive technical internship centered on AI Workflow Automation Tools.</p>
-        </div>
-
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/quantum_iamuuv.png" alt="Quantum" /></div>
-          <span class="project-meta">06 // SEC // ENCRYPTION</span>
-          <h3 class="project-title">Quantum vs Classical Cipher</h3>
-          <p class="project-desc">A web app showing the different relative strengths of encryption and dangers possessed by quantum computing in breaking them against classical computers.</p>
-        </div>
-
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/onlyoffice_rmzjq7.jpg" alt="OnlyOffice" /></div>
-          <span class="project-meta">07 // SEC // RESEARCH</span>
-          <h3 class="project-title">OnlyOffice XSS Deep-Dive</h3>
-          <p class="project-desc">A research presentation on how exactly a XSS is achieved in the web application, as a final project for Harvard Online.</p>
-        </div>
-
-        <div class="project-card glass">
-          <div class="img-box lens-target"><img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/portswigger_nktm5s.png" alt="PortSwigger" /></div>
-          <span class="project-meta">08 // RECON // LABS</span>
-          <h3 class="project-title">PortSwigger Labs</h3>
-          <p class="project-desc">Deep understanding of web exploits after breaking labs across a broad spectrum of topics, including OWASP Top 10 vulnerabilities.</p>
-        </div>
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cryptmentor_swt0at.png" alt="CryptMentor" loading="lazy" />
       </div>
-    </section>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">01</span>
+          <span class="proj-type">FINTECH</span>
+        </div>
+        <h3 class="proj-title">CryptMentor Simulator</h3>
+        <p class="proj-desc">Cryptocurrency market simulation offering real-world insight for new investors navigating cyber exchange.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
 
-    <footer class="contact">
-      <span class="section-label">CONNECT FOR WEB TESTING / TO BUILD PROJECTS</span>
-      <div class="email-box glass lens-target">
-        <a href="javascript:void(0)" class="email-link">vedantcholkar@gmail.com</a>
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964056/studyflow_fnidst.png" alt="StudyFlow" loading="lazy" />
       </div>
-      <div class="social-links">
-        <a href="javascript:void(0)">GitHub</a>
-        <a href="javascript:void(0)">LinkedIn</a>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">02</span>
+          <span class="proj-type">DEV</span>
+        </div>
+        <h3 class="proj-title">StudyFlow Platform</h3>
+        <p class="proj-desc">Pomodoro timers, Google Calendar integration, and stress exercises — tools for the focused student.</p>
+        <span class="proj-arrow">↗</span>
       </div>
-    </footer>
-  </main>
+    </a>
+
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cs50x_y4cue1.png" alt="CS50x" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">03</span>
+          <span class="proj-type">HARVARD</span>
+        </div>
+        <h3 class="proj-title">CS50x Computer Science</h3>
+        <p class="proj-desc">50+ projects across the full Harvard Online curriculum. The foundation for everything that followed.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/cs50_cybersec_mqrprp.jpg" alt="CS50 Cybersecurity" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">04</span>
+          <span class="proj-type">HARVARD</span>
+        </div>
+        <h3 class="proj-title">CS50 Cybersecurity</h3>
+        <p class="proj-desc">Web security foundations with graded topic essays deepening understanding of the attack surface.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/aadvik_x5u2ib.jpg" alt="Aadvik TekLabs" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">05</span>
+          <span class="proj-type">AI / AUTOMATION</span>
+        </div>
+        <h3 class="proj-title">Aadvik TekLabs</h3>
+        <p class="proj-desc">30-day intensive internship in AI workflow automation tools and applied machine learning pipelines.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/quantum_iamuuv.png" alt="Quantum vs Classical" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">06</span>
+          <span class="proj-type">ENCRYPTION</span>
+        </div>
+        <h3 class="proj-title">Quantum vs Classical Cipher</h3>
+        <p class="proj-desc">Visualising the relative strengths of encryption schemes and the threat quantum computing poses to them.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+    <a class="proj reveal lens-target" href="#" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/onlyoffice_rmzjq7.jpg" alt="OnlyOffice XSS" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">07</span>
+          <span class="proj-type">RESEARCH</span>
+        </div>
+        <h3 class="proj-title">OnlyOffice XSS Deep-Dive</h3>
+        <p class="proj-desc">Research presentation on XSS exploitation mechanics — final project for Harvard CS50 Cybersecurity.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+    <a class="proj reveal lens-target" href="https://portswigger.net" target="_blank">
+      <div class="proj-img">
+        <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/portswigger_nktm5s.png" alt="PortSwigger Labs" loading="lazy" />
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <span class="proj-meta">08</span>
+          <span class="proj-type">LABS</span>
+        </div>
+        <h3 class="proj-title">PortSwigger Labs</h3>
+        <p class="proj-desc">OWASP Top 10 and beyond. Practical mastery of web exploits across a broad spectrum of vulnerability classes.</p>
+        <span class="proj-arrow">↗</span>
+      </div>
+    </a>
+
+  </section>
+
+  <!-- CONTACT -->
+  <footer class="contact">
+    <span class="contact-eyebrow reveal">FOR WEB TESTING · BUILD PROJECTS · COLLABORATE</span>
+    <a class="contact-email reveal lens-target" href="mailto:vedantcholkar@gmail.com" style="transition-delay:0.08s">
+      vedantcholkar@gmail.com
+    </a>
+    <div class="contact-socials reveal" style="transition-delay:0.16s">
+      <a href="https://github.com/VedantCholkar" target="_blank" class="lens-target">GitHub</a>
+      <a href="https://www.linkedin.com/in/vedant-cholkar/" target="_blank" class="lens-target">LinkedIn</a>
+    </div>
+    <div class="contact-bottom reveal" style="transition-delay:0.24s">
+      <span class="contact-copy">© 2025 Vedant Cholkar</span>
+    </div>
+  </footer>
 
   <script>
-    // GEOMETRIC REVEAL LOADER LOGIC
+    /* ── LOADER ── */
     window.addEventListener('load', () => {
-      const loader = document.getElementById('loader');
       setTimeout(() => {
-        // "Unfolds" the page vertically
-        loader.style.clipPath = 'inset(0 0 100% 0)';
-      }, 2000);
+        const l = document.getElementById('loader');
+        l.classList.add('done');
+        setTimeout(() => l.remove(), 900);
+      }, 1800);
     });
 
-    // SMOOTH SCROLL
+    /* ── LENIS SMOOTH SCROLL ── */
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.4,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
     function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
-    // CURSOR
-    const dot = document.getElementById('cursor-dot');
+    /* ── NAV SCROLL STATE ── */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ── ORIGINAL CURSOR: dot + mix-blend lens ── */
+    const dot  = document.getElementById('cursor-dot');
     const lens = document.getElementById('cursor-lens');
     let mouseX = -100, mouseY = -100, dotX = -100, dotY = -100;
 
-    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
     function updateCursor() {
       dotX += (mouseX - dotX) * 0.2;
       dotY += (mouseY - dotY) * 0.2;
-      dot.style.transform = `translate(calc(${dotX}px - 50%), calc(${dotY}px - 50%))`;
+      dot.style.transform  = `translate(calc(${dotX}px - 50%), calc(${dotY}px - 50%))`;
       lens.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%)) scale(${document.body.classList.contains('lens-active') ? 1 : 0})`;
       requestAnimationFrame(updateCursor);
     }
@@ -368,6 +747,18 @@
       el.addEventListener('mouseenter', () => document.body.classList.add('lens-active'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('lens-active'));
     });
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
