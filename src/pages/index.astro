@@ -18,19 +18,19 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0a0a0b;
-      --fg:       #ede8e0;
-      --dim:      rgba(237,232,224,0.72);
-      --dim2:     rgba(237,232,224,0.50);
+      --bg:        #0a0a0b;
+      --fg:        #ede8e0;
+      --dim:       rgba(237,232,224,0.72);
+      --dim2:      rgba(237,232,224,0.50);
       --glass-bg: rgba(237,232,224,0.045);
       --glass-b:  rgba(237,232,224,0.12);
       --glass-bt: rgba(237,232,224,0.28);
-      --accent:   #E5533D;
+      --accent:    #E5533D;
       --serif:    'Cormorant', Georgia, serif;
-      --sans:     'DM Sans', sans-serif;
-      --mono:     'Space Mono', monospace;
-      --ease:     cubic-bezier(0.16, 1, 0.3, 1);
-      --pad:      clamp(32px, 7vw, 96px);
+      --sans:      'DM Sans', sans-serif;
+      --mono:      'Space Mono', monospace;
+      --ease:      cubic-bezier(0.16, 1, 0.3, 1);
+      --pad:       clamp(32px, 7vw, 96px);
     }
 
     html { height: auto; scroll-behavior: auto; }
@@ -116,7 +116,9 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0;
       z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr; /* Grid for perfect centering */
+      align-items: center;
       padding: 28px var(--pad);
       transition: background 0.6s var(--ease), backdrop-filter 0.6s var(--ease);
     }
@@ -126,18 +128,22 @@
       -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--glass-b);
     }
-    .nav-mark {
+    .nav-clock {
       font-family: var(--mono);
       font-size: 0.72rem;
       letter-spacing: 0.18em;
       color: var(--dim);
+      justify-self: start;
     }
     .nav-status {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; 
+      align-items: center; 
+      gap: 10px;
       font-family: var(--mono);
       font-size: 0.72rem;
       letter-spacing: 0.16em;
       color: var(--accent);
+      justify-self: center;
     }
     .pulse {
       width: 6px; height: 6px;
@@ -156,6 +162,7 @@
       color: var(--dim);
       text-decoration: none;
       transition: color 0.3s;
+      justify-self: end;
     }
     .nav-link:hover { color: var(--fg); }
 
@@ -294,7 +301,7 @@
       line-height: 1.65;
     }
 
-    /* ── PROJECTS — each project is its own full-width row ── */
+    /* ── PROJECTS ── */
     .projects { border-bottom: 1px solid var(--glass-b); }
     .projects-header {
       display: flex; align-items: baseline; justify-content: space-between;
@@ -461,6 +468,17 @@
     @media (max-width: 860px) {
       body { cursor: auto; }
       #cursor-dot, #cursor-lens { display: none; }
+      
+      nav {
+        grid-template-columns: 1fr 1fr; /* Only clock and status */
+      }
+      .nav-link {
+        display: none; /* Hide Connect link on mobile */
+      }
+      .nav-status {
+        justify-self: end; /* Align status to right when link is hidden */
+      }
+
       .hero { grid-template-columns: 1fr; min-height: auto; }
       .hero-l {
         padding: 120px var(--pad) 56px;
@@ -497,15 +515,14 @@
   <div id="cursor-dot"></div>
 
   <nav id="nav">
-    <span class="nav-mark">VEDANT CHOLKAR - 2026</span>
+    <span class="nav-clock" id="clock">00:00:00</span>
     <div class="nav-status">
-      <span class="pulse"></span>
       CYBERSECURITY RESEARCHER
+      <span class="pulse"></span>
     </div>
     <a href="mailto:vedantcholkar@gmail.com" class="nav-link lens-target">CONNECT</a>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-l">
       <p class="hero-eyebrow reveal">001 / IDENTITY</p>
@@ -528,7 +545,6 @@
     </div>
   </section>
 
-  <!-- STATEMENT -->
   <section class="statement">
     <span class="statement-label reveal">FOCUS</span>
     <p class="statement-text reveal" style="transition-delay:0.12s">
@@ -538,15 +554,14 @@
     </p>
   </section>
 
-  <!-- STATS -->
   <div class="stats">
     <div class="stat reveal">
-      <div class="stat-n">50+</div>
+      <div class="stat-n">70+</div>
       <div class="stat-label">CS50x<br>Projects</div>
     </div>
     <div class="stat reveal" style="transition-delay:0.08s">
-      <div class="stat-n">8</div>
-      <div class="stat-label">OWASP Labs<br>Completed</div>
+      <div class="stat-n">50+</div>
+      <div class="stat-label">PortSwigger Labs<br>Completed</div>
     </div>
     <div class="stat reveal" style="transition-delay:0.16s">
       <div class="stat-n">2</div>
@@ -558,14 +573,13 @@
     </div>
   </div>
 
-  <!-- PROJECTS -->
   <section class="projects">
     <div class="projects-header">
       <span class="projects-header-label">OPERATIONS ARCHIVE</span>
       <span class="projects-header-count">008 ENTRIES</span>
     </div>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://devpost.com/software/crypt-mentor-team-54">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cryptmentor_swt0at.png" alt="CryptMentor" loading="lazy" />
       </div>
@@ -580,7 +594,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://github.com/VedantCholkar/StudyFlow-School">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964056/studyflow_fnidst.png" alt="StudyFlow" loading="lazy" />
       </div>
@@ -595,7 +609,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://github.com/VedantCholkar/Projects-CS50x">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964053/cs50x_y4cue1.png" alt="CS50x" loading="lazy" />
       </div>
@@ -610,7 +624,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://raw.githubusercontent.com/VedantCholkar/VedantCholkar/refs/heads/main/CS50%20Cybersecurity.png">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/cs50_cybersec_mqrprp.jpg" alt="CS50 Cybersecurity" loading="lazy" />
       </div>
@@ -625,7 +639,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://media.licdn.com/dms/image/v2/D562DAQGHZwxnloU17g/profile-treasury-document-images_1920/B56Z32YVhEIYAs-/1/1777955069934?e=1779321600&v=beta&t=Y5N_qX8GFiPOn2iI_QvZCmDxFPvERS-QK173zF28N3U">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/aadvik_x5u2ib.jpg" alt="Aadvik TekLabs" loading="lazy" />
       </div>
@@ -640,7 +654,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://quantum-threats.vercel.app/">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/quantum_iamuuv.png" alt="Quantum vs Classical" loading="lazy" />
       </div>
@@ -655,7 +669,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="#" target="_blank">
+    <a class="proj reveal lens-target" href="https://www.youtube.com/watch?v=J64uYBR0T_s">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964054/onlyoffice_rmzjq7.jpg" alt="OnlyOffice XSS" loading="lazy" />
       </div>
@@ -670,7 +684,7 @@
       </div>
     </a>
 
-    <a class="proj reveal lens-target" href="https://portswigger.net" target="_blank">
+    <a class="proj reveal lens-target" href="https://portswigger.net/web-security/all-topics">
       <div class="proj-img">
         <img src="https://res.cloudinary.com/df6yxni8e/image/upload/f_auto,q_auto/v1777964052/portswigger_nktm5s.png" alt="PortSwigger Labs" loading="lazy" />
       </div>
@@ -687,7 +701,6 @@
 
   </section>
 
-  <!-- CONTACT -->
   <footer class="contact">
     <span class="contact-eyebrow reveal">FOR WEB TESTING · BUILD PROJECTS · COLLABORATE</span>
     <a class="contact-email reveal lens-target" href="mailto:vedantcholkar@gmail.com" style="transition-delay:0.08s">
@@ -698,7 +711,7 @@
       <a href="https://www.linkedin.com/in/vedant-cholkar/" target="_blank" class="lens-target">LinkedIn</a>
     </div>
     <div class="contact-bottom reveal" style="transition-delay:0.24s">
-      <span class="contact-copy">© 2025 Vedant Cholkar</span>
+      <span class="contact-copy">© 2026 Vedant Cholkar</span>
     </div>
   </footer>
 
@@ -711,6 +724,17 @@
         setTimeout(() => l.remove(), 900);
       }, 1800);
     });
+
+    /* ── CLOCK ── */
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     /* ── LENIS SMOOTH SCROLL ── */
     const lenis = new Lenis({
